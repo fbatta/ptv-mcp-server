@@ -1,0 +1,17 @@
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: ptv-mcp-server
+  ai:
+    mcp:
+      server:
+        name: ptv-mcp-server
+        transport: webflux
+        version: 0.0.1
+        protocol: STREAMABLE
+
+clients:
+  ptv:
+    baseUrl: https://timetableapi.ptv.vic.gov.au/
+    apiVersion: v3
