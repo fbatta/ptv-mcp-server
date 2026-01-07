@@ -1,0 +1,12 @@
+server:
+  ssl:
+    enabled: false
+
+logging:
+  level:
+    root: DEBUG
+
+clients:
+  ptv:
+    username: ${PTV_API_DEVID}
+    password: ${PTV_API_SECRET}
