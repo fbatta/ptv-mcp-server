@@ -99,18 +99,23 @@ class PtvClient(
 
         val tempUri = builder.path(path)
             .queryParam(DEVID_QUERY_PARAM_KEY, ptvClientProperties.username)
-            .build(uriVariables)
+            .build(*uriVariables)
 
         val signature = calculateHMACSignature(tempUri)
 
         return builder
             .queryParam(SIGNATURE_QUERY_PARAM_KEY, signature)
-            .build(uriVariables)
+            .build(*uriVariables)
     }
 
     internal fun calculateHMACSignature(uri: URI): String {
         // Remove the baseUrl from the string
-        val uriBytes = uri.toString().replace(ptvClientProperties.baseUrl, "/").byteInputStream().readBytes()
+        val uriBytes = ptvClientProperties.baseUrl.last().let { lastChar ->
+            if (lastChar == '/') {
+                return@let uri.toString().replace(ptvClientProperties.baseUrl, "/").byteInputStream().readBytes()
+            }
+            return@let uri.toString().replace(ptvClientProperties.baseUrl, "").byteInputStream().readBytes()
+        }
         val keyBytes = ptvClientProperties.password.byteInputStream().readBytes()
 
         val signingKey = SecretKeySpec(keyBytes, HMAC_SHA1_ALGORITHM)
