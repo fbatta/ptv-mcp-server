@@ -1,5 +1,9 @@
 package net.battaglini.ptvmcpserver.client
 
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.jetty.jakarta.*
+import io.ktor.client.request.*
 import jakarta.annotation.PostConstruct
 import net.battaglini.ptvmcpserver.configuration.CacheConfiguration.Companion.PTV_DISRUPTIONS_CACHE_NAME
 import net.battaglini.ptvmcpserver.configuration.CacheConfiguration.Companion.PTV_ROUTES_CACHE_NAME
@@ -13,8 +17,6 @@ import net.battaglini.ptvmcpserver.dto.PtvRoutesResponseDto
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.util.DefaultUriBuilderFactory
 import org.springframework.web.util.UriBuilderFactory
 import java.net.URI
@@ -25,12 +27,13 @@ import javax.crypto.spec.SecretKeySpec
 @Component
 class PtvClient(
     private val ptvClientProperties: PtvClientProperties,
-    private val ptvWebClient: WebClient,
 ) {
+    private lateinit var ptvWebClient: HttpClient
     private lateinit var uriBuilderFactory: UriBuilderFactory
 
     @PostConstruct
     fun init() {
+        ptvWebClient = HttpClient(Jetty)
         uriBuilderFactory = DefaultUriBuilderFactory(ptvClientProperties.baseUrl)
     }
 
@@ -39,11 +42,9 @@ class PtvClient(
         LOGGER.debug("Getting all PTV routes...")
 
         val uri = buildRequestURI("/{apiVersion}/routes", ptvClientProperties.apiVersion)
-
-        return ptvWebClient.get()
-            .uri(uri)
-            .retrieve()
-            .awaitBody<PtvRoutesResponseDto>()
+        return ptvWebClient.get {
+            url(uri.toURL())
+        }.body<PtvRoutesResponseDto>()
     }
 
     @Cacheable(PTV_ROUTE_CACHE_NAME)
@@ -52,10 +53,9 @@ class PtvClient(
 
         val uri = buildRequestURI("/{apiVersion}/routes/{routeId}", ptvClientProperties.apiVersion, routeId)
 
-        return ptvWebClient.get()
-            .uri(uri)
-            .retrieve()
-            .awaitBody<PtvRouteResponseDto>()
+        return ptvWebClient.get {
+            url(uri.toURL())
+        }.body<PtvRouteResponseDto>()
     }
 
     @Cacheable(PTV_STOPS_CACHE_NAME)
@@ -69,10 +69,9 @@ class PtvClient(
             routeType
         )
 
-        return ptvWebClient.get()
-            .uri(uri)
-            .retrieve()
-            .awaitBody<PtvRouteStopsResponseDto>()
+        return ptvWebClient.get {
+            url(uri.toURL())
+        }.body<PtvRouteStopsResponseDto>()
     }
 
     @Cacheable(PTV_DISRUPTIONS_CACHE_NAME)
@@ -88,10 +87,9 @@ class PtvClient(
             )
         } ?: buildRequestURI("/{apiVersion}/disruptions/route/{route_id}", ptvClientProperties.apiVersion, routeId)
 
-        return ptvWebClient.get()
-            .uri(uri)
-            .retrieve()
-            .awaitBody<PtvDisruptionsResponseDto>()
+        return ptvWebClient.get {
+            url(uri.toURL())
+        }.body<PtvDisruptionsResponseDto>()
     }
 
     internal fun buildRequestURI(path: String, vararg uriVariables: Any): URI {

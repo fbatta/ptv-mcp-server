@@ -2,6 +2,10 @@ server:
   ssl:
     enabled: false
 
+spring:
+  config:
+    import: optional:file:.env.local
+
 logging:
   level:
     root: DEBUG

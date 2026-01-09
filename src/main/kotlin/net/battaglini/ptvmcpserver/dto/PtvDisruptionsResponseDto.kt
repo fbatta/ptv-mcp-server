@@ -64,7 +64,7 @@ data class PtvDisruptionsResponseDto(
         @JsonIgnoreUnknownKeys
         data class DisruptionRoute(
             @SerialName("route_type")
-            val routeType: Integer? = null,
+            val routeType: Int? = null,
             @SerialName("route_id")
             val routeId: Int? = null,
             @SerialName("route_name")
