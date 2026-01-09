@@ -2,11 +2,15 @@ server:
   ssl:
     enabled: false
 
+spring:
+  config:
+    import: optional:file:.env.local
+
 logging:
   level:
     root: DEBUG
 
 clients:
   ptv:
-    username: ${PTV_API_DEVID}
-    password: ${PTV_API_SECRET}
+    username: 3003607
+    password: df2229eb-1983-4e1f-bd68-dc6c8df8b0bf
