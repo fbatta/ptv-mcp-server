@@ -1,0 +1,25 @@
+server:
+  ssl:
+    enabled: false
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          introspection-uri: https://oauth2.googleapis.com/tokeninfo
+          client-id: ${GOOGLE_CLIENT_ID}
+          client-secret: ${GOOGLE_CLIENT_SECRET}
+app:
+  baseUrl: "http://localhost:8080"
+  oauth-authorization-server:
+    authorization-server-url: "https://accounts.google.com/"
+
+logging:
+  level:
+    root: DEBUG
+
+clients:
+  ptv:
+    username: ${PTV_API_DEVID}
+    password: ${PTV_API_SECRET}

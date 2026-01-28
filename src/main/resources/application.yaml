@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: PTV MCP Server
+  ai:
+    mcp:
+      server:
+        protocol: STREAMABLE
+
+clients:
+  ptv:
+    baseUrl: https://timetableapi.ptv.vic.gov.au/
+    apiVersion: v3
+
+app:
+  oauth-authorization-server:
+    scopes:
+      - openid
+      - email
+      - profile
